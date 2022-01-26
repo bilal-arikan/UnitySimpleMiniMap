@@ -50,8 +50,6 @@ namespace Arikan
                 Debug.LogWarning("No Renderer or Collider found on the origin, world bounds and sprite bounds matching may be wrong!");
                 worldBounds = new Bounds(origin.position, Vector3.one);
             }
-
-
         }
 
 #if ODIN_INSPECTOR
@@ -72,7 +70,7 @@ namespace Arikan
             }
             if (target.lossyScale.x != 1)
             {
-                Debug.LogWarning("[MiniMap] target.lossyScale != 1, this causes wrong positions over minimap", target);
+                Debug.LogWarning("[MiniMapView] target.lossyScale != 1, this causes wrong positions over minimap", target);
             }
             if (mainMap.Key != null)
             {
