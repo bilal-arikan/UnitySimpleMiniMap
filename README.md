@@ -1,12 +1,13 @@
-# MiniMapSpriteOnly
+# Mini Map Sprite Only
 MiniMap feature without RenderTexure and Camera
 
 | Video 1                             |
 | ----------------------------------- |
 | ![Alt text](/SS~/DemoSS.gif "Demo Gif") |
 
-API:
-```
+API Example:
+
+```C#
 var minimap = FindObjectOfType<Arikan.MiniMapView>();
 
 // Red object example
@@ -23,4 +24,5 @@ img3.color = obj3.material.color;
 ```
 
 Import Demo Unity Package
+
 ![Alt text](/SS~/DemoUP.PNG "Demo Import")
