@@ -5,6 +5,12 @@ MiniMap feature without RenderTexure and Camera
 | ----------------------------------- |
 | ![Alt text](/SS~/DemoSS.gif "Demo Gif") |
 
+How to Import:
+ - Add to manifest 
+```
+"com.arikan.minimap" : "https://github.com/bilal-arikan/MiniMapSpriteOnly.git",
+```
+
 API Example:
 
 ```C#
