@@ -1,17 +1,17 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace Arikan
 {
     public class MiniMapView : MonoBehaviour
     {
-        [Header("[REQUIRED] MiniMap World Center")]
+        [Header("MiniMap World Center")]
         public Transform origin;
 
         [Header("RectTransform Roots")]
@@ -24,11 +24,16 @@ namespace Arikan
 
         private Dictionary<Transform, RectTransform> redDotMap = new Dictionary<Transform, RectTransform>();
         private KeyValuePair<Transform, RectTransform> mainMap = new KeyValuePair<Transform, RectTransform>();
-        private Bounds worldBounds;
+        private Bounds worldBounds = new Bounds();
 
         private void OnEnable()
         {
-            if (origin.TryGetComponent<Renderer>(out var renderer))
+            if (origin == null)
+            {
+                origin = new GameObject("MiniMapOrigin_Generated").transform;
+                worldBounds = new Bounds(origin.position, Vector3.one);
+            }
+            else if (origin.TryGetComponent<Renderer>(out var renderer))
             {
                 worldBounds = renderer.bounds;
             }
@@ -45,13 +50,26 @@ namespace Arikan
                 Debug.LogWarning("No Renderer or Collider found on the origin, world bounds and sprite bounds matching may be wrong!");
                 worldBounds = new Bounds(origin.position, Vector3.one);
             }
+
+
         }
 
 #if ODIN_INSPECTOR
         [Button]
 #endif
-        public void FollowCentered(Transform target, Sprite icon = null)
+        /// <summary>
+        /// Follow target over the minimap, returns Generated MiniMap Image object
+        /// </summary>
+        public Image FollowCentered(Transform target, Sprite icon = null)
         {
+            if (centeredDotCanvas == null)
+            {
+                throw new NullReferenceException("[MiniMapView] centeredDotCanvas is null");
+            }
+            if (uiDotPrefab == null)
+            {
+                throw new NullReferenceException("[MiniMapView] uiDotPrefab is null");
+            }
             if (target.lossyScale.x != 1)
             {
                 Debug.LogWarning("[MiniMap] target.lossyScale != 1, this causes wrong positions over minimap", target);
@@ -62,18 +80,33 @@ namespace Arikan
             }
 
             var uiDot = Instantiate(uiDotPrefab, centeredDotCanvas);
-            uiDot.GetComponent<Image>().sprite = icon ?? defaultSprite;
+            uiDot.sprite = icon ?? defaultSprite;
             mainMap = new KeyValuePair<Transform, RectTransform>(target, uiDot.transform as RectTransform);
+            return uiDot;
         }
 
 #if ODIN_INSPECTOR
         [Button]
 #endif
-        public void Follow(Transform target, Sprite icon = null)
+        /// <summary>
+        /// Follow target over the minimap, returns Generated MiniMap Image object
+        /// </summary>
+        public Image Follow(Transform target, Sprite icon = null)
         {
+            if (otherDotCanvas == null)
+            {
+                throw new NullReferenceException("[MiniMapView] otherDotCanvas is null");
+            }
+            if (uiDotPrefab == null)
+            {
+                throw new NullReferenceException("[MiniMapView] uiDotPrefab is null");
+            }
+            UnfollowTarget(target);
+
             var uiDot = Instantiate(uiDotPrefab, otherDotCanvas);
-            uiDot.GetComponent<Image>().sprite = icon ?? defaultSprite;
+            uiDot.sprite = icon ?? defaultSprite;
             redDotMap.Add(target, uiDot.transform as RectTransform);
+            return uiDot;
         }
 
 #if ODIN_INSPECTOR
@@ -83,12 +116,14 @@ namespace Arikan
         {
             if (mainMap.Key == target)
             {
-                Destroy(mainMap.Value.gameObject);
+                if (mainMap.Value != null)
+                    Destroy(mainMap.Value.gameObject);
                 mainMap = new KeyValuePair<Transform, RectTransform>();
             }
             else if (redDotMap.TryGetValue(target, out var redDot))
             {
-                Destroy(redDot.gameObject);
+                if (redDot != null)
+                    Destroy(redDot.gameObject);
                 redDotMap.Remove(target);
             }
         }
