@@ -1,17 +1,17 @@
 # Mini Map Sprite Only
-MiniMap feature without RenderTexure and Camera
+Unity MiniMap feature without RenderTexure and Camera
 
 | Video 1                             |
 | ----------------------------------- |
 | ![Alt text](/SS~/DemoSS.gif "Demo Gif") |
 
 How to Import:
- - Add to manifest 
+ - Add to manifest.json
 ```
 "com.arikan.minimap" : "https://github.com/bilal-arikan/MiniMapSpriteOnly.git",
 ```
 
-API Example:
+How to Use:
 
 ```C#
 var minimap = FindObjectOfType<Arikan.MiniMapView>();

@@ -2,7 +2,7 @@
   "name": "com.arikan.minimap",
   "displayName": "Arikan Framework MiniMap",
   "version": "1.0.0",
-  "unity": "2020.1",
+  "unity": "2017.1",
   "author": "Bilal Arikan",
   "description": "MiniMap feature without RenderTexure and Camera",
   "repository": {
