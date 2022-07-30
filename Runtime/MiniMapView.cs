@@ -11,9 +11,6 @@ namespace Arikan
 {
     public class MiniMapView : MonoBehaviour
     {
-        [Header("MiniMap World Center")]
-        public Transform origin;
-
         [Header("RectTransform Roots")]
         public RectTransform centeredDotCanvas;
         public RectTransform otherDotCanvas;
@@ -21,34 +18,20 @@ namespace Arikan
         public Sprite defaultSprite;
         [Header("Default Dot Prefab")]
         public Image uiDotPrefab;
+#if ODIN_INSPECTOR
+        [Required]
+#endif
+        [Header("Bounds Object")]
+        public MiniMapBounds miniMapBounds;
 
         private Dictionary<Transform, RectTransform> redDotMap = new Dictionary<Transform, RectTransform>();
         private KeyValuePair<Transform, RectTransform> mainMap = new KeyValuePair<Transform, RectTransform>();
-        private Bounds worldBounds = new Bounds();
 
         private void OnEnable()
         {
-            if (origin == null)
+            if (miniMapBounds == null)
             {
-                origin = new GameObject("MiniMapOrigin_Generated").transform;
-                worldBounds = new Bounds(origin.position, Vector3.one);
-            }
-            else if (origin.TryGetComponent<Renderer>(out var renderer))
-            {
-                worldBounds = renderer.bounds;
-            }
-            else if (origin.TryGetComponent<Collider>(out var collider))
-            {
-                worldBounds = collider.bounds;
-            }
-            else if (origin.TryGetComponent<Collider2D>(out var collider2D))
-            {
-                worldBounds = collider2D.bounds;
-            }
-            else
-            {
-                Debug.LogWarning("No Renderer or Collider found on the origin, world bounds and sprite bounds matching may be wrong!");
-                worldBounds = new Bounds(origin.position, Vector3.one);
+                miniMapBounds = FindObjectOfType<MiniMapBounds>();
             }
         }
 
@@ -163,15 +146,18 @@ namespace Arikan
             }
         }
 
+
         public void Translate(Transform worldObj, RectTransform dot)
         {
+            var worldBounds = miniMapBounds.GetWorldRect();
             var sizeDif = new Vector3(
                 otherDotCanvas.sizeDelta.x / worldBounds.size.x,
                 1,
                 otherDotCanvas.sizeDelta.y / worldBounds.size.z
             );
 
-            var m = this.origin.worldToLocalMatrix * worldObj.localToWorldMatrix;
+            var originWorldToLocal = Matrix4x4.TRS(worldBounds.center, Quaternion.identity, Vector3.one);
+            var m = originWorldToLocal * worldObj.localToWorldMatrix;
 
             dot.localPosition = Vector3.Scale(sizeDif, m.GetPosition()).XZ();
             dot.localEulerAngles = new Vector3(0, 0, -m.GetRotation().eulerAngles.y);
@@ -179,13 +165,15 @@ namespace Arikan
 
         public void TranslateReverse(Transform worldObj, RectTransform dot)
         {
+            var worldBounds = miniMapBounds.GetWorldRect();
             var sizeDif = new Vector3(
                 otherDotCanvas.sizeDelta.x / worldBounds.size.x,
                 1,
                 otherDotCanvas.sizeDelta.y / worldBounds.size.z
             );
 
-            var m = worldObj.worldToLocalMatrix * this.origin.localToWorldMatrix;
+            var originLocalToWorld = Matrix4x4.TRS(-worldBounds.center, Quaternion.identity, Vector3.one);
+            var m = worldObj.worldToLocalMatrix * originLocalToWorld;
 
             otherDotCanvas.localPosition = Vector3.Scale(sizeDif, m.GetPosition()).XZ();
             otherDotCanvas.localEulerAngles = new Vector3(0, 0, -m.GetRotation().eulerAngles.y);
@@ -193,9 +181,10 @@ namespace Arikan
 
         private void OnDrawGizmosSelected()
         {
-            if (origin != null)
+            if (miniMapBounds != null)
             {
-                Gizmos.DrawWireCube(origin.position, worldBounds.size);
+                var worldBounds = miniMapBounds.GetWorldRect();
+                Gizmos.DrawWireCube(worldBounds.center, worldBounds.size);
             }
         }
     }
