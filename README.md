@@ -1,5 +1,7 @@
-# Mini Map Sprite Only
+# Unity Simple Mini Map
 Unity MiniMap feature without RenderTexure and Camera
+
+Does not require additional cameras or RenderTexture. In this way, you do not need to use different layers and layermasks, overhead cameras, or RenderTexture assets.
 
 | Video 1                             |
 | ----------------------------------- |
@@ -8,7 +10,7 @@ Unity MiniMap feature without RenderTexure and Camera
 How to Import:
  - Add to manifest.json
 ```
-"com.arikan.minimap" : "https://github.com/bilal-arikan/MiniMapSpriteOnly.git",
+"com.arikan.minimap" : "https://github.com/bilal-arikan/UnitySimpleMiniMap.git",
 ```
 
 How to Use:
