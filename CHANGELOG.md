@@ -8,7 +8,6 @@
 - `Follow(target, icon, rotateWithTarget)` keeps icons upright on a rotating map when `rotateWithTarget` is false.
 - `Refresh()`, `CenteredTarget`, `FollowedTargetCount` and `IsFollowing()`.
 - `MiniMapMath` conversion helpers.
-- Edit mode tests.
 - Demo: moving centered target and on-screen rotation and zoom controls.
 
 ### Fixed

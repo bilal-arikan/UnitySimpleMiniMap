@@ -32,7 +32,8 @@ Requires Unity 2021.3 or newer and uGUI.
       └─ Map        Image with the map    -> otherDotCanvas
    ```
    - `Map` must be a direct child of `Mask`.
-   - Keep the aspect ratio of the `Map` rect equal to the aspect ratio of the bounds and turn off *Preserve Aspect* on its Image. Otherwise icons drift away from the picture.
+   - Keep the aspect ratio of the `Map` rect equal to the aspect ratio of the bounds and turn off *Preserve Aspect* on its Image, so the picture covers exactly the bounds area. Otherwise icons drift away from the picture.
+   - The map texture does not have to be square: any aspect ratio works as long as the rect matches it. Versions before 1.1.0 needed a 1:1 texture to stay aligned while the map rotated.
 4. Assign an icon prefab (`Image`) to `uiDotPrefab` and optionally a `defaultSprite`.
 
 ## Usage
@@ -88,9 +89,3 @@ Icon rotation uses the target's forward vector on the `XZ` plane and its up vect
 ## Demo
 Open `Demo/MiniMapDemo.unity` and press Play. Use the buttons at the top right to switch the rotation mode and zoom.
 The demo scene uses URP materials. In the Built-in or HDRP pipeline the meshes look pink, but the mini map works.
-
-## Tests
-List the package in `testables` in `Packages/manifest.json` to see its edit mode tests in the Test Runner:
-```json
-"testables": [ "com.arikan.minimap" ]
-```
