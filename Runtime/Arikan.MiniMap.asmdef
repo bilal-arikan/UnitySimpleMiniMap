@@ -1,3 +1,6 @@
 {
-	"name": "Arikan.MiniMap"
+	"name": "Arikan.MiniMap",
+	"references": [
+		"UnityEngine.UI"
+	]
 }

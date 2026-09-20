@@ -1,13 +1,29 @@
 {
   "name": "com.arikan.minimap",
-  "displayName": "Arikan Framework MiniMap",
-  "version": "1.0.0",
-  "unity": "2017.1",
-  "author": "Bilal Arikan",
-  "description": "MiniMap feature without RenderTexure and Camera",
+  "displayName": "Arikan Simple MiniMap",
+  "version": "1.1.0",
+  "unity": "2021.3",
+  "description": "Lightweight uGUI mini map without extra cameras or RenderTextures. Supports north-up and rotate-with-target modes, zoom, and XZ (3D) or XY (2D) worlds.",
+  "keywords": [
+    "minimap",
+    "map",
+    "ui",
+    "ugui",
+    "2d",
+    "3d"
+  ],
+  "author": {
+    "name": "Bilal Arikan",
+    "url": "https://github.com/bilal-arikan"
+  },
+  "documentationUrl": "https://github.com/bilal-arikan/UnitySimpleMiniMap#readme",
+  "changelogUrl": "https://github.com/bilal-arikan/UnitySimpleMiniMap/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/bilal-arikan/UnitySimpleMiniMap/blob/main/LICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bilal-arikan/MiniMapSpriteOnly.git"
+    "url": "https://github.com/bilal-arikan/UnitySimpleMiniMap.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "com.unity.ugui": "1.0.0"
+  }
 }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 #if ODIN_INSPECTOR
@@ -9,184 +6,119 @@ using Sirenix.OdinInspector;
 
 namespace Arikan
 {
-    public class MiniMapView : MonoBehaviour
+    /// <summary>
+    /// Shows followed targets on a map image without extra cameras or render textures.
+    /// </summary>
+    public partial class MiniMapView : MonoBehaviour
     {
+        private const float MinimumZoom = 0.01f;
+        private const float MinimumZoomStep = 1.01f;
+
         [Header("RectTransform Roots")]
+        [Tooltip("Viewport of the map, usually the mask. The centered target is shown at its center.")]
         public RectTransform centeredDotCanvas;
+
+        [Tooltip("Map image rect. It must show exactly the MiniMapBounds area and be a direct child of the viewport.")]
         public RectTransform otherDotCanvas;
-        [Header("Defult Sprite")]
+
+        [Header("Default Sprite")]
         public Sprite defaultSprite;
+
         [Header("Default Dot Prefab")]
         public Image uiDotPrefab;
+
 #if ODIN_INSPECTOR
         [Required]
 #endif
         [Header("Bounds Object")]
         public MiniMapBounds miniMapBounds;
 
-        private Dictionary<Transform, RectTransform> redDotMap = new Dictionary<Transform, RectTransform>();
-        private KeyValuePair<Transform, RectTransform> mainMap = new KeyValuePair<Transform, RectTransform>();
+        [Header("Rotation")]
+        [Tooltip("NorthUp keeps world up at the top. RotateWithTarget turns the map with the centered target.")]
+        [SerializeField]
+        private MiniMapRotationMode rotationMode = MiniMapRotationMode.RotateWithTarget;
+
+        [Header("Zoom")]
+        [SerializeField, Min(MinimumZoom)]
+        private float zoom = 1f;
+
+        [SerializeField, Min(MinimumZoom)]
+        private float minZoom = 0.5f;
+
+        [SerializeField, Min(MinimumZoom)]
+        private float maxZoom = 4f;
+
+        [Tooltip("Multiplier applied by ZoomIn and ZoomOut.")]
+        [SerializeField, Min(MinimumZoomStep)]
+        private float zoomStep = 1.25f;
+
+        /// <summary>
+        /// How the map rotates while a centered target is followed.
+        /// </summary>
+        public MiniMapRotationMode RotationMode
+        {
+            get => rotationMode;
+            set => rotationMode = value;
+        }
+
+        /// <summary>
+        /// Current zoom factor, clamped between <see cref="MinZoom"/> and <see cref="MaxZoom"/>.
+        /// </summary>
+        public float Zoom
+        {
+            get => zoom;
+            set => zoom = Mathf.Clamp(value, minZoom, maxZoom);
+        }
+
+        public float MinZoom => minZoom;
+
+        public float MaxZoom => maxZoom;
+
+        /// <summary>
+        /// Sets the zoom limits and clamps the current zoom into them.
+        /// </summary>
+        public void SetZoomLimits(float min, float max)
+        {
+            minZoom = Mathf.Max(MinimumZoom, Mathf.Min(min, max));
+            maxZoom = Mathf.Max(minZoom, Mathf.Max(min, max));
+            Zoom = zoom;
+        }
+
+#if ODIN_INSPECTOR
+        [Button]
+#endif
+        public void ZoomIn()
+        {
+            Zoom = zoom * zoomStep;
+        }
+
+#if ODIN_INSPECTOR
+        [Button]
+#endif
+        public void ZoomOut()
+        {
+            Zoom = zoom / zoomStep;
+        }
 
         private void OnEnable()
         {
             if (miniMapBounds == null)
             {
-                miniMapBounds = FindObjectOfType<MiniMapBounds>();
+                miniMapBounds = MiniMapObjectUtility.FindFirst<MiniMapBounds>();
             }
         }
 
-#if ODIN_INSPECTOR
-        [Button]
-#endif
-        /// <summary>
-        /// Follow target over the minimap, returns Generated MiniMap Image object
-        /// </summary>
-        public Image FollowCentered(Transform target, Sprite icon = null)
+        private void LateUpdate()
         {
-            if (centeredDotCanvas == null)
-            {
-                throw new NullReferenceException("[MiniMapView] centeredDotCanvas is null");
-            }
-            if (uiDotPrefab == null)
-            {
-                throw new NullReferenceException("[MiniMapView] uiDotPrefab is null");
-            }
-            if (target.lossyScale.x != 1)
-            {
-                Debug.LogWarning("[MiniMapView] target.lossyScale != 1, this causes wrong positions over minimap", target);
-            }
-            if (mainMap.Key != null)
-            {
-                UnfollowTarget(mainMap.Key);
-            }
-
-            var uiDot = Instantiate(uiDotPrefab, centeredDotCanvas);
-            uiDot.sprite = icon ?? defaultSprite;
-            mainMap = new KeyValuePair<Transform, RectTransform>(target, uiDot.transform as RectTransform);
-            return uiDot;
+            Refresh();
         }
 
-#if ODIN_INSPECTOR
-        [Button]
-#endif
-        /// <summary>
-        /// Follow target over the minimap, returns Generated MiniMap Image object
-        /// </summary>
-        public Image Follow(Transform target, Sprite icon = null)
+        private void OnValidate()
         {
-            if (otherDotCanvas == null)
-            {
-                throw new NullReferenceException("[MiniMapView] otherDotCanvas is null");
-            }
-            if (uiDotPrefab == null)
-            {
-                throw new NullReferenceException("[MiniMapView] uiDotPrefab is null");
-            }
-            UnfollowTarget(target);
-
-            var uiDot = Instantiate(uiDotPrefab, otherDotCanvas);
-            uiDot.sprite = icon ?? defaultSprite;
-            redDotMap.Add(target, uiDot.transform as RectTransform);
-            return uiDot;
-        }
-
-#if ODIN_INSPECTOR
-        [Button]
-#endif
-        public void UnfollowTarget(Transform target)
-        {
-            if (mainMap.Key == target)
-            {
-                if (mainMap.Value != null)
-                    Destroy(mainMap.Value.gameObject);
-                mainMap = new KeyValuePair<Transform, RectTransform>();
-            }
-            else if (redDotMap.TryGetValue(target, out var redDot))
-            {
-                if (redDot != null)
-                    Destroy(redDot.gameObject);
-                redDotMap.Remove(target);
-            }
-        }
-
-#if ODIN_INSPECTOR
-        [Button]
-#endif
-        public void ClearTargets()
-        {
-            if (mainMap.Key != null)
-            {
-                UnfollowTarget(mainMap.Key);
-            }
-            foreach (var redDot in redDotMap.ToList())
-            {
-                UnfollowTarget(redDot.Key);
-            }
-        }
-
-        private void Update()
-        {
-            if (mainMap.Key != null)
-            {
-                var target = mainMap.Key;
-                var redDot = mainMap.Value;
-
-                TranslateReverse(target, redDot);
-            }
-
-            foreach (var pair in redDotMap)
-            {
-                var target = pair.Key;
-                var redDot = pair.Value;
-
-                if (target != null)
-                {
-                    Translate(target, redDot);
-                }
-            }
-        }
-
-
-        public void Translate(Transform worldObj, RectTransform dot)
-        {
-            var worldBounds = miniMapBounds.GetWorldRect();
-            var sizeDif = new Vector3(
-                otherDotCanvas.sizeDelta.x / worldBounds.size.x,
-                1,
-                otherDotCanvas.sizeDelta.y / worldBounds.size.z
-            );
-
-            var originWorldToLocal = Matrix4x4.TRS(worldBounds.center, Quaternion.identity, Vector3.one);
-            var m = originWorldToLocal * worldObj.localToWorldMatrix;
-
-            dot.localPosition = Vector3.Scale(sizeDif, m.GetPosition()).XZ();
-            dot.localEulerAngles = new Vector3(0, 0, -m.GetRotation().eulerAngles.y);
-        }
-
-        public void TranslateReverse(Transform worldObj, RectTransform dot)
-        {
-            var worldBounds = miniMapBounds.GetWorldRect();
-            var sizeDif = new Vector3(
-                otherDotCanvas.sizeDelta.x / worldBounds.size.x,
-                1,
-                otherDotCanvas.sizeDelta.y / worldBounds.size.z
-            );
-
-            var originLocalToWorld = Matrix4x4.TRS(-worldBounds.center, Quaternion.identity, Vector3.one);
-            var m = worldObj.worldToLocalMatrix * originLocalToWorld;
-
-            otherDotCanvas.localPosition = Vector3.Scale(sizeDif, m.GetPosition()).XZ();
-            otherDotCanvas.localEulerAngles = new Vector3(0, 0, -m.GetRotation().eulerAngles.y);
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            if (miniMapBounds != null)
-            {
-                var worldBounds = miniMapBounds.GetWorldRect();
-                Gizmos.DrawWireCube(worldBounds.center, worldBounds.size);
-            }
+            minZoom = Mathf.Max(MinimumZoom, minZoom);
+            maxZoom = Mathf.Max(minZoom, maxZoom);
+            zoomStep = Mathf.Max(MinimumZoomStep, zoomStep);
+            zoom = Mathf.Clamp(zoom, minZoom, maxZoom);
         }
     }
-
 }
