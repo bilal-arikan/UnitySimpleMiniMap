@@ -2,7 +2,8 @@
   "name": "com.arikan.minimap",
   "displayName": "Arikan Simple MiniMap",
   "version": "1.2.0",
-  "unity": "2021.3",
+  "unity": "6000.0",
+  "unityRelease": "23f1",
   "description": "Lightweight uGUI mini map without extra cameras or RenderTextures. Supports north-up and rotate-with-target modes, zoom, and XZ (3D) or XY (2D) worlds.",
   "keywords": [
     "minimap",
@@ -24,6 +25,6 @@
     "url": "https://github.com/bilal-arikan/UnitySimpleMiniMap.git"
   },
   "dependencies": {
-    "com.unity.ugui": "1.0.0"
+    "com.unity.ugui": "2.0.0"
   }
 }

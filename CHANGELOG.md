@@ -28,6 +28,7 @@
 - `package.json`: minimum Unity version, repository URL and uGUI dependency.
 
 ### Changed
+- The minimum Unity version is Unity 6 (6000.0).
 - Missing references throw `InvalidOperationException` and a null target throws `ArgumentNullException` instead of `NullReferenceException`.
 
 ### Removed

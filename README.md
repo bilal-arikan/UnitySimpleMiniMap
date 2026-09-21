@@ -22,7 +22,7 @@ Add the package to `Packages/manifest.json`:
 ```json
 "com.arikan.minimap": "https://github.com/bilal-arikan/UnitySimpleMiniMap.git",
 ```
-Requires Unity 2021.3 or newer and uGUI.
+Requires Unity 6 (6000.0) or newer and uGUI.
 
 ## Setup
 1. **Bounds:** add `MiniMapBounds` to an empty GameObject. It creates `TopRight` and `BottomLeft` corners. Move them to the corners of the area shown by your map image and pick the plane: `XZ` for 3D, `XY` for 2D.
