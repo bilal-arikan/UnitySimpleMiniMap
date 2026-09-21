@@ -9,6 +9,7 @@
 - `Refresh()`, `CenteredTarget`, `FollowedTargetCount` and `IsFollowing()`.
 - `MiniMapMath` conversion helpers.
 - Demo: moving centered target and on-screen rotation and zoom controls.
+- Offline PDF documentation with a setup guide and a script reference.
 
 ### Fixed
 - Icons and the centered map were offset when the bounds center was not at the world origin.

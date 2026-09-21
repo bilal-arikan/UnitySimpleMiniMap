@@ -15,6 +15,8 @@ The map is a regular UI image and targets are projected onto it every frame. You
 - Icons can turn with their target or stay upright
 - Icons of destroyed targets are removed automatically
 
+A step-by-step setup guide and the script reference are also available offline in `Documentation/SimpleMiniMap_Documentation.pdf`.
+
 ## Installation
 Add the package to `Packages/manifest.json`:
 ```json
