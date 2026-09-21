@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0] - 2026-09-20
+## [1.2.0] - 2026-09-21
 ### Added
 - `MiniMapView.RotationMode` with `NorthUp` and `RotateWithTarget` (default, previous behavior).
 - Zoom: `Zoom`, `MinZoom`, `MaxZoom`, `SetZoomLimits`, `ZoomIn` and `ZoomOut`. Icons keep their size while zooming.

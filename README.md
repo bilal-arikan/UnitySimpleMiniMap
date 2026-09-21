@@ -35,7 +35,7 @@ Requires Unity 2021.3 or newer and uGUI.
    ```
    - `Map` must be a direct child of `Mask`.
    - Keep the aspect ratio of the `Map` rect equal to the aspect ratio of the bounds and turn off *Preserve Aspect* on its Image, so the picture covers exactly the bounds area. Otherwise icons drift away from the picture.
-   - The map texture does not have to be square: any aspect ratio works as long as the rect matches it. Versions before 1.1.0 needed a 1:1 texture to stay aligned while the map rotated.
+   - The map texture does not have to be square: any aspect ratio works as long as the rect matches it. Versions before 1.2.0 needed a 1:1 texture to stay aligned while the map rotated.
 4. Assign an icon prefab (`Image`) to `uiDotPrefab` and optionally a `defaultSprite`.
 
 ## Usage

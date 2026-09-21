@@ -1,7 +1,7 @@
 {
   "name": "com.arikan.minimap",
   "displayName": "Arikan Simple MiniMap",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "unity": "2021.3",
   "description": "Lightweight uGUI mini map without extra cameras or RenderTextures. Supports north-up and rotate-with-target modes, zoom, and XZ (3D) or XY (2D) worlds.",
   "keywords": [
